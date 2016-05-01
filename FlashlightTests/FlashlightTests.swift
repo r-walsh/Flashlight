@@ -21,16 +21,61 @@ class FlashlightTests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testToggle() {
+        guard let viewController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController() as? ViewController else {
+            XCTAssert(false, "Expected initial view controller to be ViewController class.")
+            return
+        }
+        
+        _ = viewController.view
+        
+        viewController.viewDidLoad()
+        
+        if viewController.isOn {
+            XCTAssert(false, "Expected flashlight to be off by default.")
+        }
+        
+        viewController.buttonTapped(viewController.onOffButton)
+        // account for animation delay
+        sleep(1)
+        checkOnOffButtonLabel(viewController)
+        checkvMainViewBackgroundColor(viewController)
+        
+        
+        viewController.buttonTapped(viewController.onOffButton)
+        
+        sleep(1)
+        checkOnOffButtonLabel(viewController)
+        checkvMainViewBackgroundColor(viewController)
     }
     
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measureBlock {
-            // Put the code you want to measure the time of here.
+    func checkOnOffButtonLabel( vc: ViewController ) {
+        if vc.isOn && vc.onOffButton.titleLabel?.text != "Off" {
+            XCTAssert(false, "Expected title label to be \"Off\", instead got \(vc.onOffButton.titleLabel?.text)")
+        }
+        
+        if !vc.isOn && vc.onOffButton.titleLabel?.text == "On" {
+            XCTAssert(false, "Expected title label to be \"Off\", instead got \(vc.onOffButton.titleLabel?.text)")
         }
     }
     
+    func checkOnOffLabelColor( vc: ViewController ) {
+        if vc.isOn && vc.onOffButton.titleLabel?.textColor !== UIColor.blackColor() {
+            XCTAssert(false, "Expected the on off button to have a text color of UIColor.blackColor(), instead got \(vc.onOffButton.titleLabel?.textColor)")
+        }
+        if vc.isOn && vc.onOffButton.titleLabel?.textColor !== UIColor.whiteColor() {
+            XCTAssert(false, "Expected the on off button to have a text color of UIColor.blackColor(), instead got \(vc.onOffButton.titleLabel?.textColor)")
+        }
+    }
+    
+    func checkvMainViewBackgroundColor( vc: ViewController ) {
+        if vc.isOn && vc.mainView.backgroundColor !== UIColor.whiteColor() {
+            XCTAssert(false, "Expected background color to be UIColor.whiteColor(), instead got \(vc.mainView.backgroundColor)")
+        }
+        
+        if !vc.isOn && vc.mainView.backgroundColor !== UIColor.blackColor() {
+            XCTAssert(false, "Expected background color to be UIColor.blackColor(), instead got \(vc.mainView.backgroundColor)")
+        }
+    }
+
 }
